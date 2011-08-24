@@ -1,5 +1,12 @@
-TFTP
+Puppet-TFTP
 ===
 
-Puppet module to setup a TFTP server.
+A puppet module to setup a TFTP server.
+
+Usage
+---
+    class { "tftp":
+      root => '/srv/tftp',
+      inet => true,
+    }
 
