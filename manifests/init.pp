@@ -1,3 +1,26 @@
+# Class: tftp
+#
+# Has been tested on: debian
+#
+# Parameters:
+# * root: specify the root directory
+# * inet: boolean to specify using inetd or not
+#
+# Actions:
+# * Installs tftp package
+# * Creates tftp root directory
+# * Start tftp service
+#
+# Requires:
+# * inet (when inet => true)
+#
+# Sample Usage:
+#
+#    class { "tftp":
+#      root => '/srv/tftp',
+#      inet => true,
+#    }
+#
 class tftp (
   $root = '/srv/tftp',
   $inet = true
@@ -6,8 +29,7 @@ class tftp (
   $tftp_root = $root
 
   if $inet == true {
-    include inetd
-#    class { "tftp::inetd": root => $tftp_root; }
+    require inetd
     augeas { "tftp inetd":
       changes => [
         "ins tftp after /files/etc/inetd.conf",
@@ -22,6 +44,17 @@ class tftp (
         "set /files/etc/inetd.conf/tftp/arguments/3 -s",
         "set /files/etc/inetd.conf/tftp/arguments/4 $root",
       ],
+    }
+    service {
+      "tftpd-hpa":
+        ensure => stopped,
+        enable => false;
+    }
+  } else {
+    service {
+      "tftpd-hpa":
+        ensure => running,
+        enable => true;
     }
   }
 
@@ -42,6 +75,11 @@ class tftp (
       owner     => root,
       group     => 0,
       mode      => 755;
+  }
+
+  file {
+    "/etc/default/tftpd-hpa":
+      content => template("tftp/default_tftpd-hpa.erb"),
   }
 
 }
