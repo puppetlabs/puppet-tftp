@@ -1,12 +1,4 @@
 Puppet-TFTP
 ===
 
-A puppet module to setup a TFTP server.
-
-Usage
----
-    class { "tftp":
-      root => '/srv/tftp',
-      inet => true,
-    }
-
+This module is now obsolete, and will be removed soon. You should use [puppetlabs-tftp](http://github.com/puppetlabs/puppetlabs-tftp)
